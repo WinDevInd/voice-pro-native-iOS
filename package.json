@@ -15,7 +15,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@capacitor-community/speech-recognition": "^6.0.1",
+    "@capacitor-community/speech-recognition": "file:vendor/speech-recognition",
     "@capacitor/core": "^6.2.1",
     "@capacitor/ios": "^6.2.1",
     "cors": "^2.8.5",

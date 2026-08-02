@@ -9,6 +9,8 @@ vi.mock("./lib/speechCapture", () => ({
     onResult: () => () => undefined,
     onInterimResult: () => () => undefined,
     onError: () => () => undefined,
+    onVolumeLevel: () => () => undefined,
+    onListeningChange: () => () => undefined,
   }),
 }));
 

@@ -74,5 +74,9 @@ npx cap open ios
 Choose a signing team, select a device or simulator, and run. Microphone and speech-recognition usage descriptions are included in `ios/App/App/Info.plist`. After changing web code or Capacitor plugins, run `npm run build && npx cap sync ios` again.
 
 Browser speech recognition support varies by browser; Chrome and Safari provide the best experience. Native iOS uses `@capacitor-community/speech-recognition`.
+The plugin is vendored in `vendor/speech-recognition` so its existing iOS
+`AVAudioEngine` tap can also publish normalized microphone volume without
+installing a competing tap. Native waveform behavior must be validated on a
+physical device; no physical iOS device was available during this implementation.
 
 Reusable `Button`, `Input`, `Card`, and `Badge` primitives remain available in `src/components`.

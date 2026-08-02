@@ -65,3 +65,10 @@ fastlane/test_output
 node_modules/
 dist/
 coverage/
+
+# Local agent runtime
+.beads/
+.copilot/
+.github/hooks/gastown.json
+.runtime/
+CLAUDE.md

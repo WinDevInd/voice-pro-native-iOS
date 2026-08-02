@@ -4,9 +4,16 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Segoe UI"', "Aptos", "Calibri", "-apple-system", "BlinkMacSystemFont", "sans-serif"]
-      }
-    }
+        sans: [
+          '"Segoe UI"',
+          "Aptos",
+          "Calibri",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "sans-serif",
+        ],
+      },
+    },
   },
-  plugins: []
+  plugins: [],
 };

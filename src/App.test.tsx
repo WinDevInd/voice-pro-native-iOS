@@ -8,12 +8,14 @@ vi.mock("./lib/speechCapture", () => ({
     stop: vi.fn(),
     onResult: () => () => undefined,
     onInterimResult: () => () => undefined,
-    onError: () => () => undefined
-  })
+    onError: () => () => undefined,
+  }),
 }));
 
 vi.mock("./components/Waveform", () => ({
-  Waveform: ({ active }: { active: boolean }) => <div data-testid="waveform">{active ? "active" : "idle"}</div>
+  Waveform: ({ active }: { active: boolean }) => (
+    <div data-testid="waveform">{active ? "active" : "idle"}</div>
+  ),
 }));
 
 describe("App", () => {
@@ -32,17 +34,34 @@ describe("App", () => {
   });
 
   it("refines text with the selected tone", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ refined: "A polished note." })
-    }));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ refined: "A polished note." }),
+      }),
+    );
     render(<App />);
-    fireEvent.change(screen.getByLabelText("Transcript"), { target: { value: "um a note" } });
-    fireEvent.change(screen.getByLabelText("Tone"), { target: { value: "Formal" } });
+    fireEvent.change(screen.getByLabelText("Transcript"), {
+      target: { value: "um a note" },
+    });
+    fireEvent.change(screen.getByLabelText("Tone"), {
+      target: { value: "Formal" },
+    });
     fireEvent.click(screen.getByRole("button", { name: /refine with ai/i }));
 
-    expect(await screen.findByLabelText("Refined output")).toHaveValue("A polished note.");
-    await waitFor(() => expect(fetch).toHaveBeenCalledWith("/api/refine", expect.objectContaining({ method: "POST" })));
-    expect(JSON.parse((fetch as ReturnType<typeof vi.fn>).mock.calls[0][1].body).tone).toBe("Formal");
+    expect(await screen.findByLabelText("Refined output")).toHaveValue(
+      "A polished note.",
+    );
+    await waitFor(() =>
+      expect(fetch).toHaveBeenCalledWith(
+        "/api/refine",
+        expect.objectContaining({ method: "POST" }),
+      ),
+    );
+    expect(
+      JSON.parse((fetch as ReturnType<typeof vi.fn>).mock.calls[0][1].body)
+        .tone,
+    ).toBe("Formal");
   });
 });

@@ -6,7 +6,9 @@ interface WaveformProps {
 }
 
 export function Waveform({ active }: WaveformProps) {
-  const [levels, setLevels] = useState(() => Array.from({ length: 28 }, () => 0.12));
+  const [levels, setLevels] = useState(() =>
+    Array.from({ length: 28 }, () => 0.12),
+  );
   const frame = useRef<number>();
 
   useEffect(() => {
@@ -19,12 +21,20 @@ export function Waveform({ active }: WaveformProps) {
     let context: AudioContext | undefined;
 
     const animateFallback = () => {
-      setLevels((current) => current.map((_, index) => 0.18 + Math.abs(Math.sin(Date.now() / 180 + index)) * 0.46));
+      setLevels((current) =>
+        current.map(
+          (_, index) =>
+            0.18 + Math.abs(Math.sin(Date.now() / 180 + index)) * 0.46,
+        ),
+      );
       frame.current = requestAnimationFrame(animateFallback);
     };
 
     const begin = async () => {
-      if (Capacitor.isNativePlatform() || !navigator.mediaDevices?.getUserMedia) {
+      if (
+        Capacitor.isNativePlatform() ||
+        !navigator.mediaDevices?.getUserMedia
+      ) {
         animateFallback();
         return;
       }
@@ -37,7 +47,11 @@ export function Waveform({ active }: WaveformProps) {
         const data = new Uint8Array(analyser.frequencyBinCount);
         const animate = () => {
           analyser.getByteFrequencyData(data);
-          setLevels(Array.from({ length: 28 }, (_, index) => Math.max(0.1, data[index] / 255)));
+          setLevels(
+            Array.from({ length: 28 }, (_, index) =>
+              Math.max(0.1, data[index] / 255),
+            ),
+          );
           frame.current = requestAnimationFrame(animate);
         };
         animate();
@@ -55,7 +69,10 @@ export function Waveform({ active }: WaveformProps) {
   }, [active]);
 
   return (
-    <div className="waveform" aria-label={active ? "Live microphone level" : "Microphone idle"}>
+    <div
+      className="waveform"
+      aria-label={active ? "Live microphone level" : "Microphone idle"}
+    >
       {levels.map((level, index) => (
         <span key={index} style={{ transform: `scaleY(${level})` }} />
       ))}

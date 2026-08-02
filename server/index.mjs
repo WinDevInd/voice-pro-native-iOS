@@ -22,7 +22,9 @@ app.post("/api/refine", async (request, response) => {
     return response.status(400).json({ error: "Unsupported tone." });
   }
   if (!process.env.LLM_API_KEY) {
-    return response.status(503).json({ error: "LLM_API_KEY is not configured on the server." });
+    return response
+      .status(503)
+      .json({ error: "LLM_API_KEY is not configured on the server." });
   }
 
   const instructions = [
@@ -31,7 +33,7 @@ app.post("/api/refine", async (request, response) => {
     "Correct punctuation and capitalization.",
     `Use this tone: ${tone}.`,
     context ? `Writing context: ${context}` : "",
-    "Return only the refined text."
+    "Return only the refined text.",
   ]
     .filter(Boolean)
     .join(" ");
@@ -43,33 +45,40 @@ app.post("/api/refine", async (request, response) => {
         method: "POST",
         headers: {
           Authorization: `Bearer ${process.env.LLM_API_KEY}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           model: process.env.LLM_MODEL || "gpt-4o-mini",
           temperature: 0.25,
           messages: [
             { role: "system", content: instructions },
-            { role: "user", content: text.trim() }
-          ]
-        })
-      }
+            { role: "user", content: text.trim() },
+          ],
+        }),
+      },
     );
 
     if (!upstream.ok) {
       const detail = await upstream.text();
-      return response.status(502).json({ error: `Refinement provider failed: ${detail.slice(0, 240)}` });
+      return response
+        .status(502)
+        .json({ error: `Refinement provider failed: ${detail.slice(0, 240)}` });
     }
 
     const data = await upstream.json();
     const refined = data?.choices?.[0]?.message?.content?.trim();
     if (!refined) {
-      return response.status(502).json({ error: "Refinement provider returned no text." });
+      return response
+        .status(502)
+        .json({ error: "Refinement provider returned no text." });
     }
     return response.json({ refined });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown upstream error";
-    return response.status(502).json({ error: `Unable to reach refinement provider: ${message}` });
+    const message =
+      error instanceof Error ? error.message : "Unknown upstream error";
+    return response
+      .status(502)
+      .json({ error: `Unable to reach refinement provider: ${message}` });
   }
 });
 

@@ -5,15 +5,27 @@ interface ContextEditorProps {
   presets: string[];
   dictionary: string[];
   snippets: string[];
-  onChange: (field: "presets" | "dictionary" | "snippets", values: string[]) => void;
+  onChange: (
+    field: "presets" | "dictionary" | "snippets",
+    values: string[],
+  ) => void;
 }
 
-export function ContextEditor({ presets, dictionary, snippets, onChange }: ContextEditorProps) {
-  const [drafts, setDrafts] = useState({ presets: "", dictionary: "", snippets: "" });
+export function ContextEditor({
+  presets,
+  dictionary,
+  snippets,
+  onChange,
+}: ContextEditorProps) {
+  const [drafts, setDrafts] = useState({
+    presets: "",
+    dictionary: "",
+    snippets: "",
+  });
   const groups = [
     ["presets", "Context presets", presets, "e.g. Client project update"],
     ["dictionary", "Custom dictionary", dictionary, "e.g. Capacitor"],
-    ["snippets", "Quick snippets", snippets, "e.g. Best regards, Jay"]
+    ["snippets", "Quick snippets", snippets, "e.g. Best regards, Jay"],
   ] as const;
 
   return (
@@ -25,7 +37,12 @@ export function ContextEditor({ presets, dictionary, snippets, onChange }: Conte
             <input
               value={drafts[field]}
               placeholder={placeholder}
-              onChange={(event) => setDrafts((current) => ({ ...current, [field]: event.target.value }))}
+              onChange={(event) =>
+                setDrafts((current) => ({
+                  ...current,
+                  [field]: event.target.value,
+                }))
+              }
               onKeyDown={(event) => {
                 if (event.key === "Enter" && drafts[field].trim()) {
                   onChange(field, [...values, drafts[field].trim()]);
@@ -51,7 +68,12 @@ export function ContextEditor({ presets, dictionary, snippets, onChange }: Conte
                 {value}
                 <button
                   aria-label={`Remove ${value}`}
-                  onClick={() => onChange(field, values.filter((_, itemIndex) => itemIndex !== index))}
+                  onClick={() =>
+                    onChange(
+                      field,
+                      values.filter((_, itemIndex) => itemIndex !== index),
+                    )
+                  }
                 >
                   <Trash2 size={13} />
                 </button>

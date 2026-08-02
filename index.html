@@ -2,13 +2,21 @@
 <html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
     <meta name="theme-color" content="#292929" />
     <script>
       (() => {
-        const param = new URLSearchParams(window.location.search).get("scoutTheme");
+        const param = new URLSearchParams(window.location.search).get(
+          "scoutTheme",
+        );
         const theme =
-          param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          param ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light");
         document.documentElement.setAttribute("data-theme", theme);
       })();
     </script>

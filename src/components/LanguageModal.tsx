@@ -1,15 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, X } from "lucide-react";
-
-export const languages = [
-  ["en-US", "English (US)"],
-  ["en-GB", "English (UK)"],
-  ["es-ES", "Spanish"],
-  ["fr-FR", "French"],
-  ["de-DE", "German"],
-  ["hi-IN", "Hindi"],
-  ["ja-JP", "Japanese"]
-] as const;
+import { languages } from "../lib/languages";
 
 interface LanguageModalProps {
   open: boolean;
@@ -18,11 +9,21 @@ interface LanguageModalProps {
   onClose: () => void;
 }
 
-export function LanguageModal({ open, selected, onSelect, onClose }: LanguageModalProps) {
+export function LanguageModal({
+  open,
+  selected,
+  onSelect,
+  onClose,
+}: LanguageModalProps) {
   return (
     <AnimatePresence>
       {open && (
-        <motion.div className="modal-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div
+          className="modal-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
           <motion.section
             className="modal-card"
             role="dialog"
@@ -37,7 +38,11 @@ export function LanguageModal({ open, selected, onSelect, onClose }: LanguageMod
                 <p className="eyebrow">Recognition</p>
                 <h2 id="language-title">Choose a language</h2>
               </div>
-              <button className="icon-button" onClick={onClose} aria-label="Close language selector">
+              <button
+                className="icon-button"
+                onClick={onClose}
+                aria-label="Close language selector"
+              >
                 <X size={18} />
               </button>
             </div>

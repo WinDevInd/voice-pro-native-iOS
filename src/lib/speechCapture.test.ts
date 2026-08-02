@@ -17,7 +17,9 @@ describe("BrowserSpeechCapture", () => {
 
   beforeEach(() => {
     recognition = new MockRecognition();
-    window.SpeechRecognition = vi.fn(() => recognition) as unknown as SpeechRecognitionConstructor;
+    window.SpeechRecognition = vi.fn(
+      () => recognition,
+    ) as unknown as SpeechRecognitionConstructor;
   });
 
   it("configures recognition and emits final and interim results", async () => {
@@ -37,8 +39,8 @@ describe("BrowserSpeechCapture", () => {
       results: {
         0: { 0: { transcript: "finished thought" }, isFinal: true },
         1: { 0: { transcript: "still speaking" }, isFinal: false },
-        length: 2
-      }
+        length: 2,
+      },
     } as unknown as SpeechRecognitionEvent);
 
     expect(onFinal).toHaveBeenCalledWith("finished thought");

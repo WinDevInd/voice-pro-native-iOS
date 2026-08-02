@@ -28,8 +28,10 @@ export class BrowserSpeechCapture implements SpeechCapture {
   private readonly handlers = new HandlerRegistry();
 
   async start(language: string) {
-    const Recognition = window.SpeechRecognition ?? window.webkitSpeechRecognition;
-    if (!Recognition) throw new Error("Speech recognition is not supported in this browser.");
+    const Recognition =
+      window.SpeechRecognition ?? window.webkitSpeechRecognition;
+    if (!Recognition)
+      throw new Error("Speech recognition is not supported in this browser.");
 
     this.recognition = new Recognition();
     this.recognition.continuous = true;
@@ -37,7 +39,11 @@ export class BrowserSpeechCapture implements SpeechCapture {
     this.recognition.lang = language;
     this.recognition.onresult = (event) => {
       let interim = "";
-      for (let index = event.resultIndex; index < event.results.length; index += 1) {
+      for (
+        let index = event.resultIndex;
+        index < event.results.length;
+        index += 1
+      ) {
         const transcript = event.results[index][0].transcript;
         if (event.results[index].isFinal) {
           this.handlers.final.forEach((handler) => handler(transcript.trim()));
@@ -48,7 +54,9 @@ export class BrowserSpeechCapture implements SpeechCapture {
       this.handlers.interim.forEach((handler) => handler(interim.trim()));
     };
     this.recognition.onerror = (event) => {
-      this.handlers.errors.forEach((handler) => handler(event.message || event.error));
+      this.handlers.errors.forEach((handler) =>
+        handler(event.message || event.error),
+      );
     };
     this.recognition.start();
   }
@@ -77,22 +85,26 @@ export class NativeSpeechCapture implements SpeechCapture {
 
   async start(language: string) {
     const availability = await SpeechRecognition.available();
-    if (!availability.available) throw new Error("Native speech recognition is unavailable.");
+    if (!availability.available)
+      throw new Error("Native speech recognition is unavailable.");
 
     const permission = await SpeechRecognition.requestPermissions();
     if (permission.speechRecognition !== "granted") {
       throw new Error("Speech recognition permission was denied.");
     }
 
-    this.listener = await SpeechRecognition.addListener("partialResults", ({ matches }) => {
-      const text = matches?.[0]?.trim() ?? "";
-      this.handlers.interim.forEach((handler) => handler(text));
-    });
+    this.listener = await SpeechRecognition.addListener(
+      "partialResults",
+      ({ matches }) => {
+        const text = matches?.[0]?.trim() ?? "";
+        this.handlers.interim.forEach((handler) => handler(text));
+      },
+    );
     const result = await SpeechRecognition.start({
       language,
       maxResults: 1,
       partialResults: true,
-      popup: false
+      popup: false,
     });
     const finalText = result.matches?.[0]?.trim();
     if (finalText) this.handlers.final.forEach((handler) => handler(finalText));
@@ -118,5 +130,7 @@ export class NativeSpeechCapture implements SpeechCapture {
 }
 
 export function createSpeechCapture(): SpeechCapture {
-  return Capacitor.isNativePlatform() ? new NativeSpeechCapture() : new BrowserSpeechCapture();
+  return Capacitor.isNativePlatform()
+    ? new NativeSpeechCapture()
+    : new BrowserSpeechCapture();
 }

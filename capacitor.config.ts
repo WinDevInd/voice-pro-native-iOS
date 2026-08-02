@@ -4,7 +4,6 @@ const config: CapacitorConfig = {
   appId: "com.voicepro.app",
   appName: "Voice Pro",
   webDir: "dist",
-  bundledWebRuntime: false
 };
 
 export default config;

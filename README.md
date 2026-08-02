@@ -37,12 +37,12 @@ npm run dev:server
 
 ## Environment variables
 
-| Variable | Required | Description |
-| --- | --- | --- |
-| `LLM_API_KEY` | For live AI refinement | Server-only API key |
-| `LLM_API_URL` | No | OpenAI-compatible chat completions URL |
-| `LLM_MODEL` | No | Model name; defaults to `gpt-4o-mini` |
-| `PORT` | No | Backend port; defaults to `8787` |
+| Variable      | Required               | Description                            |
+| ------------- | ---------------------- | -------------------------------------- |
+| `LLM_API_KEY` | For live AI refinement | Server-only API key                    |
+| `LLM_API_URL` | No                     | OpenAI-compatible chat completions URL |
+| `LLM_MODEL`   | No                     | Model name; defaults to `gpt-4o-mini`  |
+| `PORT`        | No                     | Backend port; defaults to `8787`       |
 
 Without an API key, the server returns a clear configuration error rather than exposing or simulating credentials.
 

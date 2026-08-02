@@ -44,6 +44,10 @@ export function Waveform({ active, nativeLevel }: WaveformProps) {
     };
 
     const begin = async () => {
+      if (Capacitor.isNativePlatform()) {
+        animateFallback();
+        return;
+      }
       if (!navigator.mediaDevices?.getUserMedia) {
         animateFallback();
         return;

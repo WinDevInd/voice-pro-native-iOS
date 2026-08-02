@@ -21,8 +21,12 @@ public class SpeechRecognition: CAPPlugin {
     private var lastVolumeUpdate: TimeInterval = 0
     private var inputTapInstalled = false
     private let audioStateLock = NSLock()
+    private let teardownLock = NSLock()
 
     private func stopAudioCapture() {
+        self.teardownLock.lock()
+        defer { self.teardownLock.unlock() }
+
         if let engine = self.audioEngine {
             engine.stop()
             if self.inputTapInstalled {

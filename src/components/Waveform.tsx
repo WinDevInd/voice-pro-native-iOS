@@ -25,7 +25,7 @@ export function Waveform({ active, nativeLevel }: WaveformProps) {
       return;
     }
 
-    if (Capacitor.isNativePlatform()) {
+    if (Capacitor.getPlatform() === "ios") {
       setLevels(nativeLevels(nativeLevel));
       return;
     }

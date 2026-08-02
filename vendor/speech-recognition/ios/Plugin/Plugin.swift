@@ -20,6 +20,7 @@ public class SpeechRecognition: CAPPlugin {
     private var recognitionTask: SFSpeechRecognitionTask?
     private var lastVolumeUpdate: TimeInterval = 0
     private var inputTapInstalled = false
+    private let audioStateLock = NSLock()
 
     private func stopAudioCapture() {
         if let engine = self.audioEngine {
@@ -29,24 +30,30 @@ public class SpeechRecognition: CAPPlugin {
                 engine.inputNode.removeTap(onBus: 0)
             }
         }
+
+        self.audioStateLock.lock()
         self.recognitionRequest?.endAudio()
         self.recognitionRequest = nil
         self.recognitionTask = nil
         self.lastVolumeUpdate = 0
-        self.notifyListeners("volumeLevel", data: ["level": 0])
-        self.notifyListeners("listeningState", data: ["status": "stopped"])
+        self.audioStateLock.unlock()
+
+        DispatchQueue.main.async {
+            self.notifyListeners("volumeLevel", data: ["level": 0])
+            self.notifyListeners("listeningState", data: ["status": "stopped"])
+        }
     }
 
-    private func publishVolumeLevel(from buffer: AVAudioPCMBuffer) {
+    private func volumeLevel(from buffer: AVAudioPCMBuffer) -> Float? {
         let now = Date.timeIntervalSinceReferenceDate
         guard now - self.lastVolumeUpdate >= 0.1,
               let samples = buffer.floatChannelData?[0] else {
-            return
+            return nil
         }
 
         let frameCount = Int(buffer.frameLength)
         guard frameCount > 0 else {
-            return
+            return nil
         }
 
         var sumOfSquares: Float = 0
@@ -59,7 +66,7 @@ public class SpeechRecognition: CAPPlugin {
         let decibels = 20 * log10(max(rootMeanSquare, 0.000_001))
         let level = max(0, min(1, (decibels + 60) / 60))
         self.lastVolumeUpdate = now
-        self.notifyListeners("volumeLevel", data: ["level": level])
+        return level
     }
 
     @objc func available(_ call: CAPPluginCall) {
@@ -154,8 +161,16 @@ public class SpeechRecognition: CAPPlugin {
             })
 
             inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) { (buffer: AVAudioPCMBuffer, _: AVAudioTime) in
+                self.audioStateLock.lock()
                 self.recognitionRequest?.append(buffer)
-                self.publishVolumeLevel(from: buffer)
+                let level = self.volumeLevel(from: buffer)
+                self.audioStateLock.unlock()
+
+                if let level = level {
+                    DispatchQueue.main.async {
+                        self.notifyListeners("volumeLevel", data: ["level": level])
+                    }
+                }
             }
             self.inputTapInstalled = true
 

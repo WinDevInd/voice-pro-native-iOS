@@ -1,0 +1,8 @@
+dist
+coverage
+node_modules
+.beads
+.copilot
+.github
+.runtime
+CLAUDE.md

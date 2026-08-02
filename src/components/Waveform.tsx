@@ -3,17 +3,30 @@ import { Capacitor } from "@capacitor/core";
 
 interface WaveformProps {
   active: boolean;
+  nativeLevel: number;
 }
 
-export function Waveform({ active }: WaveformProps) {
-  const [levels, setLevels] = useState(() =>
-    Array.from({ length: 28 }, () => 0.12),
-  );
+const idleLevels = () => Array.from({ length: 28 }, () => 0.12);
+
+const nativeLevels = (level: number) =>
+  Array.from({ length: 28 }, (_, index) => {
+    const distanceFromCenter = Math.abs(index - 13.5) / 13.5;
+    const shape = 1 - distanceFromCenter * 0.35;
+    return Math.max(0.1, level * shape);
+  });
+
+export function Waveform({ active, nativeLevel }: WaveformProps) {
+  const [levels, setLevels] = useState(idleLevels);
   const frame = useRef<number>();
 
   useEffect(() => {
     if (!active) {
-      setLevels(Array.from({ length: 28 }, () => 0.12));
+      setLevels(idleLevels());
+      return;
+    }
+
+    if (Capacitor.getPlatform() === "ios") {
+      setLevels(nativeLevels(nativeLevel));
       return;
     }
 
@@ -31,10 +44,11 @@ export function Waveform({ active }: WaveformProps) {
     };
 
     const begin = async () => {
-      if (
-        Capacitor.isNativePlatform() ||
-        !navigator.mediaDevices?.getUserMedia
-      ) {
+      if (Capacitor.isNativePlatform()) {
+        animateFallback();
+        return;
+      }
+      if (!navigator.mediaDevices?.getUserMedia) {
         animateFallback();
         return;
       }
@@ -66,7 +80,7 @@ export function Waveform({ active }: WaveformProps) {
       stream?.getTracks().forEach((track) => track.stop());
       void context?.close();
     };
-  }, [active]);
+  }, [active, nativeLevel]);
 
   return (
     <div

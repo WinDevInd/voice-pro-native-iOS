@@ -1,0 +1,44 @@
+{
+  "name": "@capacitor-community/speech-recognition",
+  "version": "6.0.1-voice-pro.1",
+  "description": "A native plugin for speech recognition",
+  "main": "dist/plugin.cjs.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "unpkg": "dist/plugin.js",
+  "files": [
+    "android/src/main/",
+    "android/build.gradle",
+    "dist/",
+    "ios/Plugin/",
+    "CapacitorCommunitySpeechRecognition.podspec"
+  ],
+  "author": "Priyank Patel <priyank.patel@stackspace.ca>",
+  "contributors": [
+    "Matteo Padovano <mrbatista@users.noreply.github.com>"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/capacitor-community/speech-recognition.git"
+  },
+  "bugs": {
+    "url": "https://github.com/capacitor-community/speech-recognition/issues"
+  },
+  "keywords": [
+    "capacitor",
+    "plugin",
+    "native"
+  ],
+  "peerDependencies": {
+    "@capacitor/core": "^6.0.0"
+  },
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    },
+    "android": {
+      "src": "android"
+    }
+  }
+}

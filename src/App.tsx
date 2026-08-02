@@ -45,6 +45,7 @@ export default function App() {
   const [interim, setInterim] = useState("");
   const [refined, setRefined] = useState("");
   const [listening, setListening] = useState(false);
+  const [nativeVolume, setNativeVolume] = useState(0);
   const [refining, setRefining] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
@@ -61,7 +62,13 @@ export default function App() {
         setInterim("");
       }),
       speech.current.onInterimResult(setInterim),
-      speech.current.onError(setError),
+      speech.current.onError((message) => {
+        setError(message);
+        setListening(false);
+        setNativeVolume(0);
+      }),
+      speech.current.onVolumeLevel(setNativeVolume),
+      speech.current.onListeningChange(setListening),
     ];
     return () => {
       unsubscribers.forEach((unsubscribe) => unsubscribe());
@@ -80,13 +87,16 @@ export default function App() {
       if (listening) {
         await speech.current?.stop();
         setListening(false);
+        setNativeVolume(0);
         setInterim("");
       } else {
+        setNativeVolume(0);
         setListening(true);
         await speech.current?.start(language);
       }
     } catch (caught) {
       setListening(false);
+      setNativeVolume(0);
       setError(
         caught instanceof Error
           ? caught.message
@@ -216,7 +226,7 @@ export default function App() {
             </span>
           </div>
 
-          <Waveform active={listening} />
+          <Waveform active={listening} nativeLevel={nativeVolume} />
 
           <motion.button
             className={`record-button ${listening ? "stop" : ""}`}
